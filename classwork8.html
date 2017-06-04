@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        input,
+        button,
+        body {
+            font-size: 14px;
+        }
+        
+        .popup-wrapper {
+            display: none;
+            background-color: rgba(0, 0, 0, .5);
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        
+        .popup {
+            background-color: white;
+            padding: 10px;
+            width: 500px;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            margin-left: -250px;
+        }
+        
+        .list {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .list li {
+            list-style: none;
+            background-color: gray;
+            padding: 5px;
+            margin: 5px;
+        }
+        
+        .list li:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        .list li button {
+            float: right;
+        }
+        
+        .list li.passed {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+    </style>
+</head>
+
+<body>
+    <input id="new" type="text">
+    <button id="add">add</button>
+    <ul class="list">
+        <li>
+            milk
+            <button class="done">done</button>
+            <button class="remove">remove</button>
+        </li>
+        <li class="passed">
+            bread
+            <button class="done">done</button>
+            <button class="remove">remove</button>
+        </li>
+        <li>
+            beer
+            <button class="done">done</button>
+            <button class="remove">remove</button>
+        </li>
+    </ul>
+    <div class="popup-wrapper">
+        <div class="popup">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo ducimus quae, ratione corrupti, minus possimus. Unde maxime repudiandae, delectus ab perferendis cum eaque reprehenderit, necessitatibus velit reiciendis atque totam culpa.
+        </div>
+    </div>
+    <script>
+        
+        
+      
+
+
+        function Task(text, isDone) {
+            this.text = text;
+            this.isDone = isDone || false;
+        }
+        Task.prototype.done = function() {
+            this.isDone = !this.isDone;
+            console.log(this);
+        }
+
+        Task.prototype.el = function(num) {
+            var el = document.createElement('li');
+            el.innerText = this.text;
+            var done = document.createElement('button');
+            done.innerText = 'done';
+            // done.classList.add('done');
+            
+            if (this.isDone) {
+                el.classList.add('passed');
+            }
+
+            var self = this;
+            done.addEventListener('click', function() {
+                self.done();
+                el.classList.toggle('passed');
+                allTasks.save();
+            });
+            var remove = document.createElement('button');
+            remove.innerText = 'remove';
+            // remove.classList.add('remove');
+            remove.addEventListener('click', function() {
+                el.remove();
+                delete allTasks[num];
+                allTasks.save();
+            });
+            el.appendChild(done);
+            el.appendChild(remove);
+            return el;
+        }
+        
+       //localStorage
+        function List() {           
+        }
+        
+        List.prototype = [];
+        
+        List.prototype.save = function() {
+            localStorage.myApp = JSON.stringify(this);
+        }
+        
+        var allTasks = new List();
+        
+        
+        if (localStorage.myApp) {
+            var lastTasks = JSON.parse(localStorage.myApp);
+            delete lastTasks.length;
+            for(var i in lastTasks) {
+                newTask(lastTasks[i]);
+            }
+        }
+        //end of localStorage
+
+        
+        // клик - добавление нового контакта - вставляет введенный текст в переменную, вызывает функцию которая создает
+        // прототипный обьект и функцию которая сохраняет в localStorage
+        var add = document.getElementById('add');
+        add.addEventListener('click', function(el) {
+            var text = document.getElementById('new').value;
+            newTask({text: text});
+            allTasks.save();       
+        });
+
+//        функция которая создает прототипный обьект и присваивает ему id, вставляет в родительский блок обьект и вызывает функцию el(num);
+        function newTask(obj) {
+            var task = new Task(obj.text, obj.isDone);
+            var num = allTasks.push(task) - 1;
+            document.querySelector('.list').appendChild(task.el(num));
+            console.log(task);
+        }
+        
+
+
+
+
+        var list = document.querySelector('.list');
+        list.addEventListener('click', function(e) {
+            if (e.target.classList.contains('done')) {
+                e.target.parentNode.classList.toggle('passed');
+            }
+            if (e.target.classList.contains('remove')) {
+                e.target.parentNode.remove();
+            }
+        })
+        
+        document
+            .querySelector('.popup-wrapper')
+            .addEventListener('click', function(e) {
+                e.stopPropagation();
+                document
+                    .querySelector('.popup-wrapper')
+                    .style.display = 'none';
+            });
+        document
+            .querySelector('.popup')
+            .addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        console.dir(add);
+
+    </script>
+</body>
+
+</html>
