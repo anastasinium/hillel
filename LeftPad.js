@@ -1,35 +1,30 @@
 window.onload = function loadPage() {
 
-//
-//function leftPad() {
-//var text = document.getElementById('text').value;
-//
-//if (text.length === 5) {
-//    return text;
-//}
+var num = 5;
+var save = document.getElementById('save');
 
-
-//}
+function leftPad(name, num) {
+   if (name.length === num) {
+        console.log('"' + name + '"');
+        save.innerHTML = '"' + name + '"';
+   } else if (name.length === 0) {
+        console.log('Please, enter text!');
+        save.innerHTML = 'Please, enter text!';
+   } else if (name.length < num) {
+        var newName = name.padStart(num);
+        console.log('"' + newName + '"');
+        save.innerHTML = '"' + newName + '"';
+   } else if (name.length > num) {
+        console.log('Please, enter correct text');
+        save.innerHTML = 'Please, enter correct text';
+   }
+}
 
 var add = document.getElementById('add');
 
 add.addEventListener('click', function() {
-    var text = document.getElementById('text').value;
-    var save = document.getElementById('save');
-    var num = text.length;
-    console.log(num);
-
-
-    if (num === 5) {
-        save.innerHTML = text;
-
-    } else if (num < 5) {
-        var newText = text.padStart(5);
-        console.log('"' + newText + '"');
-    }
-
-//     save.innerHTML = text;
-
+    var name = document.getElementById('text').value;
+    leftPad(name, num);
 });
 
 }
